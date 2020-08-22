@@ -50,8 +50,6 @@ namespace LetsTalk.Server
                     break;
 
                 reader.AdvanceTo(consumed);
-                //reader.AdvanceTo(consumed, examined);
-                //reader.AdvanceTo(buffer.Start, buffer.End);
             }
 
         }
