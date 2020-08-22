@@ -1,15 +1,12 @@
-﻿using LetsTalk.Protocols;
-using System;
+﻿using System;
 using System.IO;
 using System.IO.Pipelines;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace LetsTalk.Client
+namespace LetsTalk.Network
 {
-
     public class SocketConnection
     {
         private readonly Socket _socket;

@@ -1,17 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="System.IO.Pipelines" Version="4.7.2" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\LetsTalk.Network\LetsTalk.Network.csproj" />
-    <ProjectReference Include="..\LetsTalk.Protocols\LetsTalk.Protocols.csproj" />
   </ItemGroup>
 
 </Project>

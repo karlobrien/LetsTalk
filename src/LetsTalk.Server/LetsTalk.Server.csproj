@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LetsTalk.Network\LetsTalk.Network.csproj" />
     <ProjectReference Include="..\LetsTalk.Protocols\LetsTalk.Protocols.csproj" />
   </ItemGroup>
 
