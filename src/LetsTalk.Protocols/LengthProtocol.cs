@@ -50,6 +50,7 @@ namespace LetsTalk.Protocols
 
             //could have used input.slice(HeaderSize + length) here
             var t = input.Slice(HeaderSize, length);
+            //var t = input.Slice(HeaderSize + length);
             //TODO: Do we go from a pool of preallocated messages here?
             message = new Message(t);
 
@@ -58,23 +59,5 @@ namespace LetsTalk.Protocols
 
             return true;
         }
-    }
-
-    public interface IMessageProtocol
-    {
-        bool TryParseMessage(in ReadOnlySequence<byte> input, ref SequencePosition consumed, ref SequencePosition examined, out Message message);
-        void WriteMessage(Message message, IBufferWriter<byte> output);
-    }
-
-    public struct Message
-    {
-        public Message(byte[] payload) : this(new ReadOnlySequence<byte>(payload)) { }
-
-        public Message(ReadOnlySequence<byte> payload)
-        {
-            Payload = payload;
-        }
-
-        public ReadOnlySequence<byte> Payload { get; }
     }
 }
