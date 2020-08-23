@@ -12,10 +12,19 @@ namespace LetsTalk.Client
         static async Task Main(string[] args)
         {
             IMessageProtocol messageProtocol = new LengthProtocol();
+
+            //the writer here will be to send messages to the server
+            //the reader will be used as part of the send to the server
             Pipe pipe = new Pipe();
 
-            Application app = new Application(pipe.Writer, messageProtocol);
-            SocketConnection sc = new SocketConnection(pipe.Reader);
+            //the writer here will be the receive from the server
+            //the read will be reading messages from the server
+            Pipe secondPipe = new Pipe();
+
+            //This is why the duplex pipe is needed
+
+            Application app = new Application(pipe.Writer, secondPipe.Reader, messageProtocol);
+            SocketConnection sc = new SocketConnection(pipe.Reader, secondPipe.Writer);
             var connectionTask = sc.StartAsync();
             var appTask = app.StartAsync();
 
@@ -30,11 +39,13 @@ namespace LetsTalk.Client
         private readonly IMessageProtocol _messageProtocol;
 
         private readonly PipeWriter _pipeWriter;
+        private readonly PipeReader _pipeReader;
 
-        public Application(PipeWriter writer, IMessageProtocol messageProtocol)
+        public Application(PipeWriter writer, PipeReader reader, IMessageProtocol messageProtocol)
         {
             _messageProtocol = messageProtocol;
             _pipeWriter = writer;
+            _pipeReader = reader;
         }
 
         public async Task StartAsync()
