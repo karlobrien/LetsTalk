@@ -4,6 +4,7 @@ using System.Buffers;
 using System.IO.Pipelines;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -43,6 +44,7 @@ namespace LetsTalk.Server
             // Create a PipeReader over the network stream
             var stream = new NetworkStream(socket);
             var reader = PipeReader.Create(stream);
+
     
             while (true)
             {
@@ -62,6 +64,7 @@ namespace LetsTalk.Server
                 reader.AdvanceTo(consumed);
             }
         }
+
 
     }
 }
