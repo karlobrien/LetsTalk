@@ -14,6 +14,9 @@ namespace LetsTalk.Client
         {
             IMessageProtocol messageProtocol = new LengthProtocol();
 
+            //IDuplexPipe duplexPipe = new IDuplexPipe();
+            //var pair = DuplexPipe.CreateConnectionPair(PipeOptions.Default, PipeOptions.Default);
+
             //the writer here will be to send messages to the server
             //the reader will be used as part of the send to the server
             Pipe pipe = new Pipe();

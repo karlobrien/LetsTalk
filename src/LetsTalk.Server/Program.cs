@@ -9,7 +9,8 @@ namespace LetsTalk.Server
         {
             var messageProtocol = new LengthProtocol();
             var messageProcessor = new MessageProcessor();
-            var server = new Server(messageProtocol, messageProcessor);
+            //var server = new Server(messageProtocol, messageProcessor);
+            ReadWriteServer server = new ReadWriteServer(messageProtocol, messageProcessor);
             await server.StartAsync();
         }
 
