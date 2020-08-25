@@ -3,6 +3,8 @@ using LetsTalk.Protocols;
 using System;
 using System.Buffers;
 using System.IO.Pipelines;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,23 +15,13 @@ namespace LetsTalk.Client
         static async Task Main(string[] args)
         {
             IMessageProtocol messageProtocol = new LengthProtocol();
-
-            //IDuplexPipe duplexPipe = new IDuplexPipe();
-            //var pair = DuplexPipe.CreateConnectionPair(PipeOptions.Default, PipeOptions.Default);
-
-            //the writer here will be to send messages to the server
-            //the reader will be used as part of the send to the server
-            Pipe pipe = new Pipe();
-
-            //the writer here will be the receive from the server
-            //the read will be reading messages from the server
-            Pipe secondPipe = new Pipe();
-
-            //This is why the duplex pipe is needed
-
-            Application app = new Application(pipe.Writer, secondPipe.Reader, messageProtocol);
-            SocketConnection sc = new SocketConnection(pipe.Reader, secondPipe.Writer);
+            Socket socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
+            SocketConnection sc = new SocketConnection(socket);
+            await socket.ConnectAsync(new IPEndPoint(IPAddress.Loopback, 8087));
             var connectionTask = sc.StartAsync();
+          
+            Application app = new Application(sc.ApplicationWriter, sc.ApplicationReader, messageProtocol);
+
             var appTask = app.StartAsync();
             var readTask = app.StartRecieve();
 
@@ -58,7 +50,7 @@ namespace LetsTalk.Client
             int count = 1;
             while (true)
             {
-                var data = $"Item: {count}";
+                var data = $"From the Client: {count}";
                 var encoded = Encoding.UTF8.GetBytes(data);
                 var msg = new Message(encoded);
 

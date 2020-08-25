@@ -38,7 +38,7 @@ namespace LetsTalk.Server
                 //new create or borrow a connection
                 //add to the overall list of connections
 
-                SocketConnectionMarkTwo sc = new SocketConnectionMarkTwo(clientSocket);
+                SocketConnection sc = new SocketConnection(clientSocket);
                 var startTask = sc.StartAsync();
                 var respondTask = RespondToClient(sc.ApplicationWriter);
                 var clientTask = RecieveClient(sc.ApplicationReader);
@@ -59,7 +59,7 @@ namespace LetsTalk.Server
                 if (_messageProtocol.TryParseMessage(buffer, ref consumed, ref examined, out var msg))
                 {
                     var readResult = Encoding.UTF8.GetString(msg.Payload.ToArray());
-                    Console.WriteLine($"Server Msg: {readResult}");
+                    Console.WriteLine($"{readResult}");
                 }
 
                 if (result.IsCompleted)
@@ -74,7 +74,7 @@ namespace LetsTalk.Server
             int count = 1;
             while (true)
             {
-                var data = $"Response: {count}";
+                var data = $"From the server: {count}";
                 var encoded = Encoding.UTF8.GetBytes(data);
                 var msg = new Message(encoded);
 
