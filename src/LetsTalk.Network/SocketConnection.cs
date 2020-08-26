@@ -1,13 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.IO.Pipelines;
-using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace LetsTalk.Network
 {
-    public class SocketConnection
+    public class SocketConnection : ConnectionDetails
     {
         private volatile bool _aborted;
         private readonly Socket _socket;
@@ -27,30 +26,38 @@ namespace LetsTalk.Network
             _socket = socket;
             _sender = new SocketSender(_socket, PipeScheduler.ThreadPool);
             _receiver = new SocketReceiver(_socket, PipeScheduler.ThreadPool);
+
+            Pipe pipeOne = new Pipe(PipeOptions.Default);
+            Pipe pipeTwo = new Pipe(PipeOptions.Default);
+
+            ApplicationWriter = pipeOne.Writer;
+            _reader = pipeOne.Reader;
+
+            _writer = pipeTwo.Writer;
+            ApplicationReader = pipeTwo.Reader;
         }
 
-        public async ValueTask StartAsync()
+        public async ValueTask<ConnectionDetails> StartAsync()
         {
-            try
+            await ExecuteAsync();
+
+            return this;
+        }
+
+        public override async ValueTask DisposeAsync()
+        {
+            if (ApplicationReader != null && ApplicationWriter != null)
             {
-                Pipe pipeOne = new Pipe(PipeOptions.Default);
-                Pipe pipeTwo = new Pipe(PipeOptions.Default);
-
-                ApplicationWriter = pipeOne.Writer;
-                _reader = pipeOne.Reader;
-
-                _writer = pipeTwo.Writer;
-                ApplicationReader = pipeTwo.Reader;
-          
-                await ExecuteAsync();
-
-                //need to return instance here so we can track
+                await ApplicationWriter.CompleteAsync().ConfigureAwait(false);
+                await ApplicationReader.CompleteAsync().ConfigureAwait(false);
             }
-            catch (Exception)
-            {
 
-                throw;
-            }
+            // Completing these loops will cause ExecuteAsync to Dispose the socket.
+        }
+
+        public override ValueTask StopAsync()
+        {
+            throw new NotImplementedException();
         }
 
         private async Task ExecuteAsync()
@@ -237,4 +244,9 @@ namespace LetsTalk.Network
 
     }
 
+    public abstract class ConnectionDetails : IAsyncDisposable
+    {
+        public abstract ValueTask DisposeAsync();
+        public abstract ValueTask StopAsync();
+    }
 }

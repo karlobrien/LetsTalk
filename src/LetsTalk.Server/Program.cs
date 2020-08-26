@@ -8,9 +8,8 @@ namespace LetsTalk.Server
         static async Task Main(string[] args)
         {
             var messageProtocol = new LengthProtocol();
-            var messageProcessor = new MessageProcessor();
-            //var server = new Server(messageProtocol, messageProcessor);
-            ReadWriteServer server = new ReadWriteServer(messageProtocol, messageProcessor);
+            DoSomethingWithEachClient sa = new DoSomethingWithEachClient(messageProtocol);
+            ReadWriteServer server = new ReadWriteServer(sa);
             await server.StartAsync();
         }
 
